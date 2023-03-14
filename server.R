@@ -25,10 +25,10 @@ server <- function(input, output, session){
   
   output$map <- renderLeaflet({
     
-    myPal <- colorRampPalette(c("#d93c2e", "#51a635"))
+    myPal <- colorRampPalette(c("#51a635", "#d93c2e"))
     factpal.Div <- colorFactor(myPal(length(maille()$info_mailles)), maille()$info_mailles)
     
-    myPal2 <- colorFactor(c("#d93c2e", "#51a635"), domain = maille()$info_mailles)
+    myPal2 <- colorFactor(c("#51a635","#d93c2e"), domain = maille()$info_mailles)
     
     leaflet() %>%
       setView(lng = 0.1, lat= 44.5, zoom = 8) %>%
@@ -36,7 +36,7 @@ server <- function(input, output, session){
       addProviderTiles(providers$Esri.WorldImagery, group = "Imagerie satelitte (ESRI)") %>%
       addPolygons(data = maille(),
                   layerId = maille()$id_maille,
-                  color = "darkgrey",
+                  color = "black",
                   fillColor = ~factpal.Div(maille()$info_mailles),
                   fillOpacity = 0.5,
                   weight = 0.5,
@@ -132,7 +132,7 @@ server <- function(input, output, session){
   
 
   dataset<-reactive({ 
-    subset(maille(), id_maille == input$map_shape_click$id & nchar(nom) > 1)  })
+    subset(maille(), id_maille == input$map_shape_click$id & nchar(nom) > 0)  })
 
   
   # observeEvent(input$save_BDD, {
@@ -142,10 +142,10 @@ server <- function(input, output, session){
   
   
   output$dt = DT::renderDataTable({
-    datatable(colnames = c("Email" = 6, "Période de prospection n°1" =7, "Période de prospection n°2" =8, "Période de prospection n°3" =9),
+    datatable(colnames = c("Prénom" = 4, "Nom" = 3, "Structure" = 5, "Période de prospection n°1" = 7, "Période de prospection n°2" = 8, "Période de prospection n°3" = 9),
               dataset(), selection = 'single', rownames= FALSE, escape = FALSE,
               options = list(
-                columnDefs = list(list(className = 'dt-center', targets = "_all"), list(visible=FALSE, targets=c(0,1,2,3,4,9))),
+                columnDefs = list(list(className = 'dt-center', targets = "_all"), list(visible=FALSE, targets=c(0,1,5,9))),
                 language = list(url = '//cdn.datatables.net/plug-ins/1.10.11/i18n/French.json'),
               scrollY = T, scrollX = T, 
               # scroller = TRUE,
