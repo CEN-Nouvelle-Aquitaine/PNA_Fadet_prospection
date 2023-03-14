@@ -17,7 +17,7 @@ library(sf)
 library(tidyr)
 library(dplyr)
 
-# setwd("C:/Users/Romain/Downloads/PNA_Papillons")
+# setwd("C:/Users/Romain/Downloads/PNA_Fadet_prospection")
 
 
 region_NA <- st_read("departement.geojson")
