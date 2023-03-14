@@ -70,19 +70,20 @@ server <- function(input, output, session){
   
   observeEvent(input$map_shape_click, {
     showModal(modalDialog(title = "Prospection PNA Papillons de jour",
+                          tags$head(tags$style(".butt3{background-color:#16881B;} .butt3{color: #e6ebef;}")),
                           fluidRow(align ="center", 
                                    actionButton(inputId = "acces_inscriptions",label = "Consulter les inscriptions pour cette maille", class="butt3")),
                           fluidRow(align ="center", 
-                          actionButton(inputId = "faire_inscriptions",label = "S'inscrire à une période de prospection sur cette maille", class="butt3"),
-                                   
-                                   footer = tagList(
-                                     modalButton("Annuler")
-                                   ), 
-                                   size = "m",
-                                   easyClose = TRUE,
-                                   fade = TRUE)))
+                          actionButton(inputId = "faire_inscriptions",label = "S'inscrire à une période de prospection sur cette maille", class="butt3")),
+                          size = "l",
+                          easyClose = TRUE, 
+                          fade = TRUE,
+                          footer = tagList(modalButton("Annuler"))
+                          ))
     
   })
+  
+  
   
   
   observeEvent(input$faire_inscriptions, {
@@ -103,13 +104,12 @@ server <- function(input, output, session){
                           ),
                           textInput("contact", "Email:"),
                           tags$head(tags$style(".butt3{background-color:#16881B;} .butt3{color: #e6ebef;}")),
-                          actionButton(inputId = "save_BDD",label = "Enregistrer", class="butt3", style = "width:250px"),
-                          footer = tagList(
-                            modalButton("Annuler")
-                          ), 
-                          size = "m",
-                          easyClose = TRUE,
-                          fade = TRUE)))
+                          actionButton(inputId = "save_BDD",label = "Enregistrer", class="butt3", style = "width:250px")),
+                          size = "l",
+                          easyClose = TRUE, 
+                          fade = TRUE,
+                          footer = tagList(modalButton("Annuler"))
+    ))
     
   })
 
@@ -162,10 +162,12 @@ server <- function(input, output, session){
                           fluidRow(align ="center",
                                    p(paste(length(dataset()$id_maille), " personnes inscrites pour la maille '", input$map_shape_click$id, "' :")),
                                    tags$style(type = "text/css", ".dataTables_wrapper { margin: 20px; }"),
-                                   DT::DTOutput("dt"),
-                                   footer = tagList(
-                                     modalButton("Annuler")
-                                   ), easyClose = TRUE, fade = TRUE)))
+                                   DT::DTOutput("dt")),
+                                size = "l",
+                                easyClose = TRUE, 
+                                fade = TRUE,
+                                footer = tagList(modalButton("Annuler"))
+    ))
   })
 
   
