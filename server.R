@@ -93,6 +93,8 @@ server <- function(input, output, session){
                                    shinyjs::useShinyjs(),
                           textInput("nom", "Nom"),
                           textInput("prenom", "Prénom"),
+                          checkboxInput("confidentialite", "Je prefère que mon nom ne soit pas visible sur les mailles auxquelles je me suis inscrit(e)", FALSE),
+                          uiOutput("conditionalInput"),
                           #structure optionnelle: 
                           textInput("structure", "Structure"),
                           ## Possibilité de cocher les 3 dates :
@@ -112,7 +114,23 @@ server <- function(input, output, session){
     ))
     
   })
-
+  
+  
+  output$conditionalInput <- renderUI({
+    if(input$confidentialite){
+      textInput("pseudo", "Veuillez renseigner un pseudonyme qui s'affichera à la place de votre nom dans l'application")}
+  })
+  
+# 
+#   observe({
+#     if(!is.null(input$nom) || !is.null(input$prenom) || input$nom == "" || input$prenom == "" ||
+#        (!input$confidentialite && (!is.null(input$pseudo) || input$pseudo == ""))) {
+#       disable("save_BDD")
+#     } else {
+#       enable("save_BDD")
+#     }
+#   })
+#   
   
   observeEvent(input$activate_passage2, {
     if(input$activate_passage2 == F){
@@ -170,15 +188,18 @@ server <- function(input, output, session){
     ))
   })
 
+
+
+
+observeEvent(input$save_BDD, {
+
+  if(!is.null(input$nom) || !is.null(input$prenom) || input$nom == "" || input$prenom == "" || input$contact == "" || !is.null(input$contact)){
+    shinyalert(title = paste("Veuillez renseigner votre nom, prénom et email pour vous inscrire à une maille !"), type = "error")
+    removeModal()}
+  else {  
+    shinyalert(title = paste("Votre inscription à la maille ",input$map_shape_click$id, " a bien été enregistrée"), type = "success")
+    removeModal()
   
-observeEvent(input$save_BDD, {
-  shinyalert(title = paste("Votre inscription à la maille ",input$map_shape_click$id, " a bien été enregistrée"), type = "success")
-  removeModal()
-})
-
-
-observeEvent(input$save_BDD, {
-
     
   req(input$map_shape_click$id)
   
@@ -189,6 +210,7 @@ observeEvent(input$save_BDD, {
     info_mailles = maille_subset$info_mailles,
     nom = input$nom,
     prenom = input$prenom,
+    pseudonyme = input$pseudo,
     structure = input$structure,
     contact = input$contact,
     passage_1 = as.character(input$dates_passages[1]),
@@ -205,7 +227,22 @@ observeEvent(input$save_BDD, {
   
   # append the new row to the geojson
   st_write(head(newLine,1), "mailles.geojson", driver = "GeoJSON", append = TRUE)
+  }
 }) 
+
+observeEvent(input$telechargement, {
+
+shinyalert(html = TRUE, text = tagList(
+  textInput("password", "Mot de passe ?"),
+))
+  
+})
+
+output$conditionalInput2 <- renderUI({
+  if(!is.null(input$password) && input$password == "adminPY64"){
+    downloadButton("download_geojson", "Télécharger le geojson", style="margin-top: 60px; margin-left: 85px; position:absolute;z-index:1;")}
+  })
+
 
 output$download_geojson <- downloadHandler(
   filename = "prospections_mailles.geojson",
