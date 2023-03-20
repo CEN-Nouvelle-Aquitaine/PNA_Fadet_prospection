@@ -15,7 +15,6 @@ library(dplyr)
 region_NA <- st_read("departement.geojson")
 
 
-
 js <- '
 $(document).on("shiny:connected", function(){
   $("#map").css({
