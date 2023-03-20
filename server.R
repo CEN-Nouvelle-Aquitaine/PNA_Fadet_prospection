@@ -147,10 +147,12 @@ server <- function(input, output, session){
     subset(maille(), id_maille == input$map_shape_click$id & nchar(nom) > 0)[, c(5, 6, 8, 9, 10)]})
 
   
+  
   # observeEvent(input$save_BDD, {
   #   shinyalert(title = paste("Votre inscription à la maille ",input$map_shape_click$id, " a bien été enregistrée"), type = "success")
   #   removeModal()
   # })
+  
 
   output$dt = DT::renderDataTable({
     datatable(colnames = c("Pseudo" = 1, "Structure" = 2, "Période de prospection n°1" = 3, "Période de prospection n°2" = 4, "Période de prospection n°3" = 5),
