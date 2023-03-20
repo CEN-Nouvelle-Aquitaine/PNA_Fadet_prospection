@@ -91,10 +91,9 @@ server <- function(input, output, session){
     showModal(modalDialog(title = "Inscription à une période de prospection PNA Papillons de jour",
                           fluidRow(align ="center", 
                                    shinyjs::useShinyjs(),
-                          textInput("nom", "Nom"),
-                          textInput("prenom", "Prénom"),
-                          checkboxInput("confidentialite", "Je prefère que mon nom ne soit pas visible sur les mailles auxquelles je me suis inscrit(e)", FALSE),
-                          uiOutput("conditionalInput"),
+                          textInput("nom", "Nom", ""),
+                          textInput("prenom", "Prénom", ""),
+                          textInput("pseudo", "Veuillez renseigner un pseudonyme qui s'affichera à la place de votre nom dans l'application", ""),
                           #structure optionnelle: 
                           textInput("structure", "Structure"),
                           ## Possibilité de cocher les 3 dates :
@@ -104,7 +103,7 @@ server <- function(input, output, session){
                             choices = c("Entre le 20/05 et le 04/06", "Entre le 05/06 et le 25/06", "Entre le 26/06 et le 20/07"),
                             selected = "Entre le 20/05 et le 04/06"
                           ),
-                          textInput("contact", "Email:"),
+                          textInput("contact", "Email", ""),
                           tags$head(tags$style(".butt3{background-color:#16881B;} .butt3{color: #e6ebef;}")),
                           actionButton(inputId = "save_BDD",label = "Enregistrer", class="butt3", style = "width:250px")),
                           size = "l",
@@ -115,11 +114,6 @@ server <- function(input, output, session){
     
   })
   
-  
-  output$conditionalInput <- renderUI({
-    if(input$confidentialite){
-      textInput("pseudo", "Veuillez renseigner un pseudonyme qui s'affichera à la place de votre nom dans l'application")}
-  })
   
 # 
 #   observe({
@@ -150,7 +144,7 @@ server <- function(input, output, session){
   
 
   dataset<-reactive({ 
-    subset(maille(), id_maille == input$map_shape_click$id & nchar(nom) > 0)  })
+    subset(maille(), id_maille == input$map_shape_click$id & nchar(nom) > 0)[, c(5, 6, 8, 9, 10)]})
 
   
   # observeEvent(input$save_BDD, {
@@ -160,10 +154,10 @@ server <- function(input, output, session){
   
   
   output$dt = DT::renderDataTable({
-    datatable(colnames = c("Prénom" = 4, "Nom" = 3, "Structure" = 5, "Période de prospection n°1" = 7, "Période de prospection n°2" = 8, "Période de prospection n°3" = 9),
+    datatable(colnames = c("Pseudo" = 1, "Structure" = 2, "Période de prospection n°1" = 3, "Période de prospection n°2" = 4, "Période de prospection n°3" = 5),
               dataset(), selection = 'single', rownames= FALSE, escape = FALSE,
               options = list(
-                columnDefs = list(list(className = 'dt-center', targets = "_all"), list(visible=FALSE, targets=c(0,1,5,9))),
+                columnDefs = list(list(className = 'dt-center', targets = "_all"), list(visible=FALSE, targets=c(5))),
                 language = list(url = '//cdn.datatables.net/plug-ins/1.10.11/i18n/French.json'),
               scrollY = T, scrollX = T, 
               # scroller = TRUE,
@@ -192,16 +186,18 @@ server <- function(input, output, session){
 
 
 observeEvent(input$save_BDD, {
+  
+  req(input$map_shape_click$id)
+  
 
-  if(!is.null(input$nom) || !is.null(input$prenom) || input$nom == "" || input$prenom == "" || input$contact == "" || !is.null(input$contact)){
-    shinyalert(title = paste("Veuillez renseigner votre nom, prénom et email pour vous inscrire à une maille !"), type = "error")
+  if(input$nom == "" || input$prenom == "" || input$contact == "" || input$pseudo == ""){
+    shinyalert(title = paste("Veuillez renseigner votre nom, prénom , pseudonyme et email pour vous inscrire à une maille !"), type = "error")
     removeModal()}
   else {  
     shinyalert(title = paste("Votre inscription à la maille ",input$map_shape_click$id, " a bien été enregistrée"), type = "success")
     removeModal()
   
     
-  req(input$map_shape_click$id)
   
   maille_subset <- maille()[maille()$id_maille == input$map_shape_click$id, ]
   isolate({
