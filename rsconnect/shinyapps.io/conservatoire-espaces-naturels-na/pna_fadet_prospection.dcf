@@ -1,0 +1,11 @@
+name: pna_fadet_prospection
+title:
+username:
+account: conservatoire-espaces-naturels-na
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 8614472
+bundleId: 6981508
+url: https://conservatoire-espaces-naturels-na.shinyapps.io/pna_fadet_prospection/
+when: 1679307509.12608
+lastSyncTime: 1679307509.12609
