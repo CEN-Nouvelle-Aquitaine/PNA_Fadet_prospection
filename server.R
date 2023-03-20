@@ -144,7 +144,7 @@ server <- function(input, output, session){
   
 
   dataset<-reactive({ 
-    subset(maille(), id_maille == input$map_shape_click$id & nchar(nom) > 0)[, c(10, 5, 7, 8, 9)]})
+    subset(maille(), id_maille == input$map_shape_click$id & nchar(nom) > 0)[, c(5, 6, 8, 9, 10)]})
 
   
   # observeEvent(input$save_BDD, {
